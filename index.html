@@ -1,106 +1,189 @@
 <!DOCTYPE html>
-<html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CF FF BD - Tournament App</title>
-<meta name="theme-color" content="#ff6600">
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CF FF BD - GR Style</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0f1115;color:#fff;font-family:Arial;padding:12px}
-.top{background:linear-gradient(90deg,#ff6600,#ffcc00);padding:16px;border-radius:12px;text-align:center;color:#000}
-.top h1{margin:0;font-size:30px}.top p{margin:4px 0 0;font-weight:bold}
-.card{background:#1e2128;padding:14px;border-radius:12px;margin:10px 0}
-input,select{width:100%;padding:11px;margin:6px 0;border-radius:8px;border:none;background:#2b2f38;color:#fff}
-.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin:5px 0}
-.btn-green{background:#00c853;color:#fff}.btn-blue{background:#2962ff;color:#fff}.btn-orange{background:#ff6600;color:#fff}.btn-red{background:#d50000;color:#fff}.btn-grey{background:#555;color:#fff}
-.tournament{padding:12px;border-radius:10px;margin:10px 0;border-left:5px solid #ff6600;background:#242832}
-.badge{padding:3px 8px;border-radius:20px;font-size:12px;font-weight:bold;color:#000}
-.flex{display:flex;gap:8px}.flex>*{flex:1}.hidden{display:none}
-.wa{background:#075e54;text-align:center}.wa a{display:block;padding:12px;border-radius:8px;text-decoration:none;font-weight:bold;margin:6px 0}
-.wa-green{background:#25D366;color:#fff}
-.winBig{background:#00c853;color:#fff;padding:10px;border-radius:10px;text-align:center;font-size:18px;font-weight:bold;margin:8px 0}
-.videoBox{background:#000;padding:10px;border-radius:10px;margin:8px 0}
-.videoBox iframe{width:100%;height:180px;border:none;border-radius:8px}
-.slotBox{background:#ffcc00;color:#000;padding:10px;border-radius:10px;text-align:center;font-weight:bold}
-.roomBox{background:#00c853;padding:12px;border-radius:10px;text-align:center;margin-top:6px}
-.roomWait{background:#333;padding:12px;border-radius:10px;text-align:center;margin-top:6px;color:#ffcc00}
-</style></head>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f2f2f7;color:#111;padding-bottom:80px}
+.top-banner{background:#111;color:#fff;padding:14px;text-align:center}
+.top-banner b{font-size:19px}
+.top-banner p{font-size:12px;color:#ffd700;margin-top:3px}
+.wrap{max-width:520px;margin:0 auto;padding:0 10px}
+.card{background:#fff;border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+input,select{width:100%;background:#f8f8f8;border:1px solid #ddd;padding:13px;border-radius:10px;margin-bottom:10px;font-size:15px;outline:none}
+.btn{width:100%;border:none;padding:13px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;color:#fff}
+.btn-blue{background:#2f7bff}.btn-green{background:#00a651}.btn-orange{background:#ff6a00}.btn-purple{background:#7b2ff7}
+.btn-dark{background:#111}
+h2{font-size:16px;text-align:center;margin:14px 0 6px}
+.cat{display:flex;gap:8px;overflow:auto;padding:6px 0}
+.cat button{white-space:nowrap;padding:8px 14px;border:none;border-radius:20px;background:#e8e8ef;font-weight:700}
+.cat button.active{background:#111;color:#fff}
+.match-card{background:#fff;border-radius:14px;overflow:hidden;margin-top:12px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.match-img{background:linear-gradient(135deg,#ff9a00,#ff2d55);color:#fff;padding:16px;text-align:center;font-weight:900;font-size:18px}
+.match-img small{display:block;font-size:11px;margin-top:4px;opacity:.9}
+.match-body{padding:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-size:12px;margin:10px 0}
+.grid b{display:block;font-size:14px;margin-top:2px}
+.grid span{color:#888;font-size:11px}
+.bar{background:#eee;height:7px;border-radius:20px;overflow:hidden}
+.bar i{display:block;height:100%;background:#00a651;width:0%}
+.join-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.join-btn{background:#fff;border:2px solid #2f7bff;color:#2f7bff;padding:7px 20px;border-radius:20px;font-weight:800}
+.green-bar{background:#00a651;color:#fff;padding:9px;text-align:center;font-size:13px;font-weight:700}
+.wallet-top{background:linear-gradient(135deg,#ff6a00,#7b2ff7);color:#fff;border-radius:16px;padding:18px;margin-top:12px}
+.wallet-top small{opacity:.9}
+.wallet-top h1{font-size:32px;margin:6px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.two div{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.two b{font-size:18px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;max-width:520px;margin:0 auto;z-index:99}
+.bottom button{flex:1;border:none;background:none;padding:10px 0;font-size:11px;color:#888}
+.bottom button.active{color:#2f7bff;font-weight:800}
+.profile-top{background:linear-gradient(180deg,#2ea6e0,#6ec6ef);padding:20px 14px;text-align:center;color:#fff}
+.avatar{width:70px;height:70px;background:#fff;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:34px}
+.list-item{display:flex;gap:12px;align-items:center;background:#fff;padding:14px;border-bottom:1px solid #eee}
+.list-item b{font-size:14px}
+.hidden{display:none}
+.notice-pop{background:#fff7e6;border:2px solid #ffb300;border-radius:12px;padding:12px;font-size:13px;line-height:1.6;margin-top:12px}
+</style>
+</head>
 <body>
 
-<div class="top"><h1>🔥 CF FF BD 🔥</h1><p>Free Fire Tournament | প্রতিদিন জিতো টাকা</p></div>
-
-<div id="loginBox" class="card">
-<h3>🔐 Login / Register - নম্বর + পাসওয়ার্ড</h3>
-<input id="lPhone" type="tel" placeholder="মোবাইল নম্বর দাও - যেমন: 01972380649">
-<input id="lPass" type="password" placeholder="Password দাও">
-<button class="btn btn-orange" onclick="login()">Login / Register করো</button>
-<p style="font-size:12px;color:#aaa;text-align:center">১ নম্বর দিয়ে ১টাই ID হবে। নম্বর ছাড়া Login হবে না।<br>Admin Number: 01972380649</p>
+<!-- LOGIN -->
+<div class="wrap" id="loginBox">
+<div class="top-banner"><b>🔥 CF FF BD 🔥</b><p>Free Fire Tournament - প্রতিদিন জিতো টাকা</p></div>
+<div class="card"><h3 style="text-align:center">🔐 Login / Register</h3><br>
+<input id="phone" placeholder="মোবাইল নম্বর - 01972380649">
+<input id="pass" type="password" placeholder="Password দাও">
+<button class="btn btn-blue" onclick="login()">Login / Register করো</button>
+<p style="font-size:12px;color:#888;text-align:center;margin-top:10px">Admin: 01972380649 | Pass: admin123</p></div>
 </div>
 
+<!-- PLAYER -->
 <div id="playerBox" class="hidden">
-<div class="card"><b>👤 <span id="pName"></span></b> | 📱 <span id="pPhone"></span> | 💰 Wallet: <b style="color:#00ff88">৳<span id="pWallet">0</span></b> <button class="btn btn-grey" onclick="logout()">Logout</button></div>
-<div class="card"><h3>🎬 কিভাবে Join করবা? ভিডিও দেখো</h3><div id="videoList"></div></div>
-<div class="card"><h3>📢 Notice</h3><p id="noticeText"></p></div>
-<div class="card wa"><h3>💬 যেকোনো সমস্যা হইছে?</h3>
-<a class="wa-green" href="https://wa.me/8801972380649?text=Assalamualaikum Vai, CF FF BD te amar somossa hoise" target="_blank">📱 WhatsApp এ Message দাও - 01972380649</a></div>
-<div class="flex"><button class="btn btn-blue" onclick="showTab('matches')">🎮 Matches</button><button class="btn btn-orange" onclick="showTab('wallet')">💰 Wallet</button><button class="btn btn-green" onclick="showTab('my')">📜 My Match</button></div>
-<div id="tab-matches"></div>
-<div id="tab-wallet" class="hidden">
-<div class="card"><h3>💰 Add Money - TrxID দিয়ে</h3><p id="payNumbers" style="font-size:13px;color:yellow"></p>
-<select id="addMethod"><option>bKash</option><option>Nagad</option></select><input id="addAmt" type="number" placeholder="তুমি Admin কে যত টাকা দিছো তত লিখো - 100"><input id="addTrx" placeholder="সঠিক TrxID দাও"><button class="btn btn-green" onclick="reqAdd()">Add Request পাঠাও</button><p style="font-size:12px;color:#aaa">তুমি Admin কে যত টাকা দিবা, Admin Approve করলে Wallet এ ঠিক তত টাকাই ঢুকবে। ১ টাকাও বেশি কম হবে না। ভুল TrxID নেওয়া হবে না।</p></div>
-<div class="card"><h3>💸 Withdraw</h3><select id="wdMethod"><option>bKash</option><option>Nagad</option></select><input id="wdNum" placeholder="তোমার bKash/Nagad নাম্বার"><input id="wdAmt" type="number" placeholder="কত টাকা তুলবা? যত লিখবা ততই কাটবে"><button class="btn btn-orange" onclick="reqWd()">Next - Withdraw Request</button><p style="font-size:12px;color:#aaa">তুমি যত লিখবা, Admin Approve করলেই Wallet থেকে ঠিক ততই কাটবে। আগে কাটবে না।</p></div>
-<div class="card"><h3>📜 History</h3><div id="hist"></div></div></div>
-<div id="tab-my" class="hidden"><div class="card"><h3>📜 আমার Match</h3><div id="myMatches"></div></div></div>
+<div id="page-play">
+<div class="top-banner"><b>CF FF BD</b><p>আমাদের অ্যাপ ডাউনলোড করতে এইখানে ক্লিক করো - CF FF BD</p></div>
+<div class="wrap">
+<div class="card" style="display:flex;gap:10px;align-items:center"><div style="background:#ff6a00;color:#fff;padding:14px;border-radius:10px;font-weight:900">Free Fire<br>Topup</div><div><b>LEVEL 30 - 110 TK</b><br><small style="color:#888">(350 DIAMOND)</small></div></div>
+
+<div class="notice-pop">⚠️ <b>Important Notice</b><br><span id="noticeText">আজ রাত 1:30 টায় Match আছে। সবাই Join করো।</span></div>
+
+<h2>Full Map Matches</h2>
+<div class="cat"><button class="active" onclick="filterCat('all',this)">All</button><button onclick="filterCat('Full Map',this)">Solo FullMap</button><button onclick="filterCat('Duo',this)">Duo FullMap</button><button onclick="filterCat('Lone',this)">Lone Wolf</button><button onclick="filterCat('CS',this)">CS 4v4</button></div>
+<div id="matchList"></div>
+
+<h2>Lone Wolf Matches</h2>
+<div id="loneList"></div>
+<h2>BONUS and Clash Squad Matches</h2>
+<div id="bonusList"></div>
+</div>
 </div>
 
-<div id="adminBox" class="hidden">
-<div class="card"><h3>👑 Admin Panel - CF FF BD</h3><p>Player: <span id="aCount"></span> জন | Admin: 01972380649</p><button class="btn btn-grey" onclick="logout()">Logout</button></div>
-<div class="card"><h3>🔐 Admin Password বদলাও</h3><input id="newAdminPass" type="password" placeholder="নতুন Admin Password"><button class="btn btn-blue" onclick="changeAdminPass()">Password বদলাও</button></div>
-<div class="card"><h3>📢 Notice বদলাও</h3><input id="setNotice" placeholder="Notice লিখো"><button class="btn btn-blue" onclick="saveNotice()">Notice Save করো</button></div>
-<div class="card"><h3>💳 bKash / Nagad নম্বর</h3><input id="setBkash" placeholder="bKash Number"><input id="setNagad" placeholder="Nagad Number"><button class="btn btn-green" onclick="savePay()">Save করো</button></div>
-<div class="card"><h3>🎬 3 টা Join Video Link</h3><input id="vid1" placeholder="Video 1 Link"><input id="vid2" placeholder="Video 2 Link"><input id="vid3" placeholder="Video 3 Link"><button class="btn btn-green" onclick="saveVideos()">Video Save করো</button></div>
+<div id="page-mymatch" class="hidden"><div class="wrap"><h2>My Matches</h2><div id="myList"></div></div></div>
 
-<div class="card"><h3>🎮 নতুন Match বানাও - Room ID পরে দিবা</h3>
-<select id="tMode"><option>BR</option><option>CS</option><option>Lone Wolf</option><option>Bonus Match</option></select>
-<input id="tTitle" placeholder="Match নাম - BR 1:30 AM"><input id="tFee" type="number" value="50" placeholder="Entry Fee - তুমি যত লিখবা ততই কাটবে"><input id="tPerKill" type="number" value="50" placeholder="Per Kill"><input id="tWin" type="number" placeholder="Win Prize"><input id="tPrize" type="number" placeholder="Total Prize"><input id="tTime" placeholder="Match Time - আজ রাত 1:30"><input id="tMax" type="number" value="48" placeholder="কয়জন Join করতে পারবে? - 45 / 48"><input id="tRules" placeholder="Match এর নিয়ম"><button class="btn btn-orange" onclick="createT()">Match বানাও ✅</button><p style="font-size:12px;color:#ffcc00">⚠️ Room ID / Password এখন দিবা না। ম্যাচের ৫ মিনিট আগে নিচে থেকে দিবা। প্রত্যেক ম্যাচেরটা আলাদা হবে।</p></div>
-<div class="card"><h3>🎮 সব Match + Join List + Room ID দাও</h3><div id="adminT"></div></div>
-<div class="card"><h3>📩 Add / Withdraw Request</h3><div id="adminReq"></div></div>
-<div class="card"><h3>👥 সব Player - Killer / Win Prize দাও</h3><div id="adminP"></div></div>
+<div id="page-results" class="hidden"><div class="wrap"><h2>Results</h2><div id="resList"></div></div></div>
+
+<div id="page-profile" class="hidden">
+<div class="profile-top"><div class="avatar">👤</div><p style="margin-top:8px">CF FF BD Username: <b id="pName"></b></p>
+<div style="display:flex;justify-content:space-around;margin-top:14px"><div><b id="pMatches">0</b><br><small>ম্যাচ খেলছো</small></div><div><b id="pWallet2" style="font-size:20px">BDT 0</b></div><div><b id="pWin">0</b><br><small>ম্যাচ জিতছো</small></div></div></div>
+<div class="wrap"><div class="card" style="padding:0">
+<div class="list-item" onclick="goWallet()">💳 <b>Wallet</b></div>
+<div class="list-item" onclick="goWallet()">💸 <b>Withdraw</b></div>
+<div class="list-item">👤 <b>My Profile</b></div>
+<div class="list-item">📋 <b>All Rules</b></div>
+<div class="list-item">🏆 <b>Top Players</b></div>
+<div class="list-item">👨‍💻 <b>Developer Profile - 01972380649</b></div>
 </div>
+<button class="btn btn-blue" style="margin-top:14px" onclick="logout()">Logout</button></div>
+</div>
+
+<div id="page-wallet" class="hidden"><div class="wrap">
+<div class="wallet-top"><small>GR STYLE - WALLET &nbsp;&nbsp; Available Balance</small><h1>৳ <span id="wBal">0</span></h1><small>VALID THRU •••• &nbsp;&nbsp; GAMING</small></div>
+<div class="two"><div>💳<br><small>DEPOSITED</small><br><b>৳ <span id="wDep">0</span></b></div><div>🏆<br><small>WINNING</small><br><b>৳ <span id="wWin">0</span></b></div></div>
+<div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-blue" onclick="showAdd()">+ Add Money</button><button class="btn btn-green" onclick="showWithdraw()">↗ Withdraw</button></div>
+
+<div class="card" id="addBox"><h3>Add Money - STEP 1</h3><p style="font-size:13px;color:#666">কত টাকা যোগ করবা?</p><br>
+<div style="display:flex;gap:8px"><button class="btn btn-dark" onclick="setAmt(100)">৳100</button><button class="btn btn-dark" onclick="setAmt(200)">৳200</button><button class="btn btn-dark" onclick="setAmt(500)">৳500</button><button class="btn btn-dark" onclick="setAmt(1000)">৳1000</button></div><br>
+<input id="addAmt" type="number" placeholder="টাকা লিখো - সর্বনিম্ন 80">
+<select id="addMethod"><option>bKash</option><option>Nagad</option></select>
+<p style="font-size:12px;color:#666">Send Money: bKash / Nagad - <b id="payNum">01972380649</b></p><br>
+<input id="addTrx" placeholder="TrxID দাও - যেমন 8N7A2B4C9D">
+<button class="btn btn-purple" onclick="addMoney()">পরবর্তী → যাচাই করুন</button>
+<p style="font-size:12px;color:#888;margin-top:8px">যত টাকা দিবা, Admin Approve করলে ঠিক ততই ঢুকবে। ভুল TrxID নেওয়া হবে না।</p></div>
+
+<div class="card" id="wdBox"><h3>Withdraw Money</h3><p style="font-size:13px">Available Balance: <b>BDT <span id="wBal2">0</span></b></p><br>
+<select id="wdMethod"><option>bKash</option><option>Nagad</option></select>
+<input id="wdNum" placeholder="Mobile Number">
+<input id="wdAmt" type="number" placeholder="Amount to Withdraw">
+<p style="background:#fff3cd;padding:10px;border-radius:8px;font-size:12px">⚠️ MINIMUM WITHDRAW AMOUNT 80</p><br>
+<button class="btn btn-green" onclick="withdrawMoney()">Withdraw Money</button></div>
+
+<div class="card"><h3>📊 Transaction History</h3><div id="histList">কোনো History নাই।</div></div>
+<div class="card"><h3>Learn and Support</h3><p style="font-size:13px">▶️ How to add money?<br>কিভাবে টাকা অ্যাড করবেন</p><br><p style="font-size:13px">🎮 How to join a match?<br>কিভাবে ম্যাচে জয়েন করবেন</p></div>
+</div></div>
+
+<div id="page-shop" class="hidden"><div class="wrap"><h2>Shop</h2><div class="card">💎 Free Fire Topup - শীঘ্রই আসছে<br><br>WhatsApp: 01972380649</div></div></div>
+
+<div class="bottom">
+<button onclick="showPage('page-shop',this)">🛒<br>Shop</button>
+<button class="active" onclick="showPage('page-play',this)">🎮<br>Play</button>
+<button onclick="showPage('page-mymatch',this)">📋<br>My Matches</button>
+<button onclick="showPage('page-results',this)">📊<br>Results</button>
+<button onclick="showPage('page-profile',this)">👤<br>Profile</button>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminBox" class="hidden"><div class="wrap">
+<div class="card"><h3>👑 Admin Panel - CF FF BD</h3><p>Player: <span id="totalP">0</span> জন</p><button class="btn btn-dark" style="margin-top:10px" onclick="logout()">Logout</button></div>
+<div class="card"><h3>📢 Notice</h3><input id="noticeInput"><button class="btn btn-blue" onclick="saveNotice()">Save</button></div>
+<div class="card"><h3>💳 bKash / Nagad নম্বর</h3><input id="payInput" value="01972380649"><button class="btn btn-green" onclick="savePay()">Save</button></div>
+<div class="card"><h3>🎬 ৩ টা Video Link</h3><input id="v1" placeholder="Video 1"><input id="v2" placeholder="Video 2"><input id="v3" placeholder="Video 3"><button class="btn btn-green" onclick="saveVideos()">Save</button></div>
+<div class="card"><h3>🎮 নতুন Match বানাও</h3><select id="mType"><option>Full Map - Solo</option><option>Duo FullMap</option><option>Lone Wolf 2v2</option><option>CS 4v4</option><option>BONUS MATCH</option></select>
+<input id="mTime" placeholder="Match Time - আজ রাত 1:30"><input id="mEntry" type="number" placeholder="Entry Fee - 50"><input id="mWin" type="number" placeholder="Win Prize - 90"><input id="mKill" type="number" placeholder="Per Kill - 12"><input id="mSlot" type="number" placeholder="Slot - 48">
+<button class="btn btn-orange" onclick="createMatch()">Match বানাও ✅</button></div>
+<div class="card"><h3>🎮 সব Match + Room ID</h3><div id="adminMatches"></div></div>
+<div class="card"><h3>🧾 Add / Withdraw Request</h3><div id="reqList"></div></div>
+<div class="card"><h3>👥 সব Player</h3><div id="playerList"></div></div>
+</div></div>
 
 <script>
-let players=JSON.parse(localStorage.getItem('cf_players')||'[]');
-let tournaments=JSON.parse(localStorage.getItem('cf_t')||'[]');
-let requests=JSON.parse(localStorage.getItem('cf_req')||'[]');
-let settings=JSON.parse(localStorage.getItem('cf_set')||'{"notice":"আজ রাত 1:30 টায় Match আছে! সবাই Join করো।","bkash":"01972380649","nagad":"01972380649","adminPass":"admin123","videos":["","",""]}');
-let current=null;
-function save(){localStorage.setItem('cf_players',JSON.stringify(players));localStorage.setItem('cf_t',JSON.stringify(tournaments));localStorage.setItem('cf_req',JSON.stringify(requests));localStorage.setItem('cf_set',JSON.stringify(settings));}
-function getColor(mode){if(mode=='BR')return '#ff6600';if(mode=='CS')return '#2962ff';if(mode=='Bonus Match')return '#FFD700';return '#00c853';}
-function ytEmbed(link){if(!link) return '';let id='';if(link.includes('v=')) id=link.split('v=')[1].split('&')[0];else if(link.includes('youtu.be/')) id=link.split('youtu.be/')[1].split('?')[0];else if(link.includes('shorts/')) id=link.split('shorts/')[1].split('?')[0];if(!id) return '<a href="'+link+'" target="_blank" style="color:#ffcc00">ভিডিও দেখো</a>';return '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen></iframe>';}
-function login(){let n=document.getElementById('lPhone').value.trim(),p=document.getElementById('lPass').value.trim();if(!n||!p) return alert('নম্বর আর Password দুইটাই দাও!');if(!/^[0-9]{10,11}$/.test(n)) return alert('সঠিক মোবাইল নম্বর দাও!');if(n=='01972380649'){if(p!=settings.adminPass) return alert('Admin Password ভুল!');current={name:'Admin',phone:n,isAdmin:true};showAdmin();return;}let f=players.find(x=>x.phone==n);if(!f){f={name:'Player '+n.slice(-4),phone:n,pass:p,wallet:0,gameId:'',gameName:''};players.push(f);save();alert('নতুন ID বানানো হইছে!');}if(f.pass!=p) return alert('Password ভুল!');current=f;showPlayer();}
-function logout(){current=null;location.reload();}
-function showPlayer(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('playerBox').classList.remove('hidden');document.getElementById('pName').innerText=current.gameName||current.name;document.getElementById('pPhone').innerText=current.phone;document.getElementById('pWallet').innerText=current.wallet;document.getElementById('noticeText').innerText=settings.notice;document.getElementById('payNumbers').innerText='📲 Send Money: bKash '+settings.bkash+' | Nagad '+settings.nagad;let vh='';(settings.videos||[]).forEach((v,i)=>{if(v) vh+='<div class="videoBox"><b>Video '+(i+1)+'</b><br>'+ytEmbed(v)+'</div>';});document.getElementById('videoList').innerHTML=vh||'এখনো ভিডিও দেওয়া হয় নাই।';renderPlayer();renderHist();}
-function showTab(t){document.getElementById('tab-matches').classList.toggle('hidden',t!='matches');document.getElementById('tab-wallet').classList.toggle('hidden',t!='wallet');document.getElementById('tab-my').classList.toggle('hidden',t!='my');if(t=='my')renderMy();}
-function roomHTML(t,myJoin){if(!myJoin) return '';if(t.room && t.pass){return `<div class="roomBox">🆔 Room ID: <b style="font-size:22px">${t.room}</b><br>🔑 Password: <b style="font-size:22px">${t.pass}</b><br><small>Admin দিয়েছে, এখন ঢুকে যাও!</small></div>`;}return `<div class="roomWait">⏳ Room ID / Password এখনো দেওয়া হয় নাই<br>Admin ম্যাচের ৫ মিনিট আগে দিবে</div>`;}
-function renderPlayer(){let h='';if(tournaments.length==0)h='<div class="card">এখনো কোনো Match নাই।</div>';tournaments.forEach((t,i)=>{let jc=t.joined?t.joined.length:0;let max=t.max||48;let left=max-jc;let isFull=jc>=max;let myJoin=t.joined?t.joined.find(j=>j.phone==current.phone):null;let color=getColor(t.mode);let btn='';if(myJoin){btn=`<div class="slotBox">✅ তুমি Join করছো! Slot No: ${myJoin.slot}</div>${roomHTML(t,myJoin)}`;}else if(isFull){btn=`<button class="btn btn-grey" disabled>❌ Full - ${max}/${max}</button>`;}else{btn=`<button class="btn btn-green" onclick="joinT(${i})">Join করো - ৳${t.fee} (ঠিক ততই কাটবে)</button>`;}h+=`<div class="tournament" style="border-left-color:${color}"><span class="badge" style="background:${color}">${t.mode}</span> <b>${t.title}</b><br><div class="winBig">🏆 জিতলে পাবা ৳${t.win} | মোট ৳${t.prize}</div>👥 Slot: <b style="color:#00ff88">${jc}/${max}</b> | বাকি: ${left} জন<br><div style="background:#333;height:8px;border-radius:10px;overflow:hidden"><div style="background:${color};width:${(jc/max)*100}%;height:100%"></div></div>🎟️ Entry Fee: ৳${t.fee} | 🔫 Per Kill: ৳${t.perKill}<br>⏰ ${t.time}<br>📜 <b>নিয়ম:</b> <span style="color:yellow">${t.rules||''}</span><br>${btn}</div>`;});document.getElementById('tab-matches').innerHTML=h;}
-function renderMy(){let h='';tournaments.forEach(t=>{let j=t.joined?t.joined.find(x=>x.phone==current.phone):null;if(j)h+=`<div class="tournament" style="border-left-color:${getColor(t.mode)}"><b>${t.title}</b> - ${t.mode}<br><div class="slotBox">তোমার Slot: ${j.slot} | Game ID: ${j.gameId} | Name: ${j.gameName}</div><div class="winBig">🏆 Win: ৳${t.win}</div>⏰ ${t.time}<br>${roomHTML(t,j)}</div>`;});document.getElementById('myMatches').innerHTML=h||'তুমি এখনো কোনো Match এ Join করো নাই।';}
-function joinT(i){let t=tournaments[i];let max=t.max||48;if(t.joined&&t.joined.find(j=>j.phone==current.phone)) return alert('তুমি এই ম্যাচে আগেই Join করছো! একবারই Join করা যাবে।');if(t.joined&&t.joined.length>=max) return alert('❌ Slot Full!');if(current.wallet<t.fee) return alert('Wallet এ টাকা নাই! Wallet এ Entry Fee এর সমান টাকা থাকতে হবে। আগে Add Money করো।');let gid=prompt('তোমার সঠিক Game ID দাও:');if(!gid) return;let gname=prompt('তোমার Game এর নাম দাও:');if(!gname) return;
-// RULE: Admin যত Entry Fee লিখছে, ঠিক ততই কাটবে - বেশি না কম না
-current.wallet-=t.fee;let p=players.find(x=>x.phone==current.phone);if(p){p.wallet=current.wallet;p.gameId=gid;p.gameName=gname;}if(!t.joined)t.joined=[];let slot=t.joined.length+1;t.joined.push({phone:current.phone,name:gname,gameId:gid,gameName:gname,slot:slot});save();document.getElementById('pWallet').innerText=current.wallet;renderPlayer();alert('✅ Join হইছে! তোমার Slot No: '+slot+' | ৳'+t.fee+' কাটছে - ঠিক ততই। Room ID Admin ৫ মিনিট আগে দিবে।');}
-function reqAdd(){let a=Number(document.getElementById('addAmt').value),trx=document.getElementById('addTrx').value.trim(),m=document.getElementById('addMethod').value;if(!a||!trx) return alert('টাকা আর সঠিক TrxID দাও!');if(trx.length<8) return alert('সঠিক TrxID দাও!');requests.push({phone:current.phone,name:current.gameName||current.name,amount:a,trx:trx,method:m,type:'Add',status:'pending'});save();renderHist();alert('Add Request গেছে! Admin Approve করলে ঠিক '+a+' টাকাই ঢুকবে।');}
-function reqWd(){let a=Number(document.getElementById('wdAmt').value),num=document.getElementById('wdNum').value.trim(),m=document.getElementById('wdMethod').value;if(!a||!num) return alert('নাম্বার আর টাকা দাও!');if(current.wallet<a) return alert('Wallet এ এত টাকা নাই!');requests.push({phone:current.phone,name:current.gameName||current.name,amount:a,trx:num,method:m,type:'Withdraw',status:'pending'});save();renderHist();alert('Withdraw Request গেছে! Admin Approve করলে ঠিক '+a+' টাকাই কাটবে।');}
-function renderHist(){let h='';requests.filter(r=>r.phone==current.phone).slice().reverse().forEach(r=>{h+=`<div>${r.type} - ৳${r.amount} - ${r.trx} (${r.method}) - <b>${r.status}</b></div>`;});document.getElementById('hist').innerHTML=h||'কোনো History নাই।';}
-function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('setBkash').value=settings.bkash||'';document.getElementById('setNagad').value=settings.nagad||'';document.getElementById('vid1').value=(settings.videos||[])[0]||'';document.getElementById('vid2').value=(settings.videos||[])[1]||'';document.getElementById('vid3').value=(settings.videos||[])[2]||'';renderAdmin();}
-function renderAdmin(){document.getElementById('aCount').innerText=players.length;let th='';tournaments.forEach((t,i)=>{let list='';(t.joined||[]).forEach(j=>{list+=`<div style="border-bottom:1px solid #444;padding:5px">Slot ${j.slot} - ${j.gameName} | Game ID: ${j.gameId} | Phone: ${j.phone}</div>`;});th+=`<div class="tournament" style="border-left-color:${getColor(t.mode)}"><b>${t.title}</b> - ${t.mode} | Slot: ${t.joined?t.joined.length:0}/${t.max||48} | Fee: ৳${t.fee} | Per Kill: ৳${t.perKill} | Win: ৳${t.win}<br><b>Room ID:</b> ${t.room||'এখনো দেওয়া হয় নাই'} | <b>Pass:</b> ${t.pass||'এখনো দেওয়া হয় নাই'}<br><button class="btn btn-blue" onclick="setRoom(${i})">📩 Room ID / Password দাও - ৫ মিনিট আগে</button><b>Join List - এই ম্যাচের আলাদা লিস্ট:</b><div style="background:#111;padding:8px;border-radius:8px">${list||'কেউ Join করে নাই'}</div><button class="btn btn-red" onclick="delT(${i})">Delete Match</button></div>`;});document.getElementById('adminT').innerHTML=th||'কোনো Match নাই।';let rh='';requests.forEach((r,i)=>{if(r.status=='pending')rh+=`<div style="border:1px solid #444;padding:10px;border-radius:8px;margin:5px 0"><b>${r.name} (${r.phone})</b> - ${r.type} - ৳${r.amount}<br>${r.method} - Trx/Number: ${r.trx}<br><div class="flex"><button class="btn btn-green" onclick="approveReq(${i})">Approve ✅ - ঠিক ${r.amount} টাকাই হবে</button><button class="btn btn-red" onclick="rejectReq(${i})">Reject ❌</button></div></div>`;});document.getElementById('adminReq').innerHTML=rh||'কোনো Pending Request নাই।';let ph='';players.forEach((p,i)=>{ph+=`<div style="border-bottom:1px solid #444;padding:8px">${p.gameName||p.name} - Phone: ${p.phone} | Game ID: ${p.gameId||'-'} - Wallet: ৳${p.wallet} <div class="flex"><button class="btn btn-green" onclick="giveMoney(${i},'Killer')">🔫 Killer Money দাও</button><button class="btn btn-orange" onclick="giveMoney(${i},'Win')">🏆 Win Prize দাও</button><button class="btn btn-red" onclick="banP(${i})">Ban</button></div></div>`;});document.getElementById('adminP').innerHTML=ph||'কোনো Player নাই।';}
-function createT(){let t={title:document.getElementById('tTitle').value,mode:document.getElementById('tMode').value,fee:Number(document.getElementById('tFee').value)||50,perKill:Number(document.getElementById('tPerKill').value)||50,win:Number(document.getElementById('tWin').value)||0,prize:Number(document.getElementById('tPrize').value)||0,time:document.getElementById('tTime').value,max:Number(document.getElementById('tMax').value)||48,rules:document.getElementById('tRules').value,room:'',pass:'',joined:[]};if(!t.title) return alert('Match নাম দাও!');tournaments.push(t);save();renderAdmin();alert('Match বানানো হইছে! Room ID ৫ মিনিট আগে দিবা।');}
-function setRoom(i){let r=prompt('এই ম্যাচের Room ID দাও:');if(!r) return;let p=prompt('এই ম্যাচের Password দাও - আলাদা পাসওয়ার্ড দাও:');if(!p) return;tournaments[i].room=r;tournaments[i].pass=p;save();renderAdmin();alert('✅ Room ID / Password দেওয়া হইছে! এখন শুধু এই ম্যাচের প্লেয়াররা দেখতে পারবে।');}
-function delT(i){if(confirm('Delete করবা?')){tournaments.splice(i,1);save();renderAdmin();}}
-function approveReq(i){let r=requests[i];let p=players.find(x=>x.phone==r.phone);if(!p) return;
-// RULE: Add = Player যত দিছে ততই যোগ হবে | Withdraw = Player যত লিখছে ততই কাটবে
-if(r.type=='Add')p.wallet+=r.amount;else if(r.type=='Withdraw'){if(p.wallet<r.amount) return alert('ওর Wallet এ টাকা নাই!');p.wallet-=r.amount;}r.status='approved';save();renderAdmin();alert('✅ Approve হইছে! ঠিক '+r.amount+' টাকাই হইছে।');}
-function rejectReq(i){requests[i].status='rejected';save();renderAdmin();}
-function giveMoney(i,type){let a=prompt(type+' কত টাকা দিবা?','100');if(a){players[i].wallet+=Number(a);save();renderAdmin();alert(type+' দেওয়া হইছে!');}}
-function banP(i){if(confirm('Ban করবা?')){players.splice(i,1);save();renderAdmin();}}
-function saveNotice(){settings.notice=document.getElementById('setNotice').value;save();alert('Notice Save হইছে!');}
-function savePay(){settings.bkash=document.getElementById('setBkash').value;settings.nagad=document.getElementById('setNagad').value;save();alert('bKash/Nagad Save হইছে!');}
-function saveVideos(){settings.videos=[document.getElementById('vid1').value,document.getElementById('vid2').value,document.getElementById('vid3').value];save();alert('3 টা Video Save হইছে!');}
-function changeAdminPass(){let np=document.getElementById('newAdminPass').value;if(!np) return alert('নতুন Password দাও!');settings.adminPass=np;save();alert('Admin Password বদলানো হইছে!');}
+let DB=JSON.parse(localStorage.getItem('cffbd_gr')||'{}');
+if(!DB.users)DB={users:{},matches:[],requests:[],history:[],notice:'আজ রাত 1:30 টায় Match আছে। সবাই Join করো।',pay:'01972380649',videos:[],adminPass:'admin123'};
+function save(){localStorage.setItem('cffbd_gr',JSON.stringify(DB))}
+let cur=null,curCat='all';
+function login(){let ph=document.getElementById('phone').value.trim(),pw=document.getElementById('pass').value.trim();if(ph.length<11||!pw)return alert('নম্বর + Password দাও');if(ph=='01972380649'){if(pw!==DB.adminPass)return alert('Admin Password ভুল!');cur={phone:ph,admin:true};showAdmin();return;}if(!DB.users[ph]){DB.users[ph]={phone:ph,pass:pw,wallet:0,dep:0,win:0,joins:[]};save();alert('নতুন ID বানানো হইছে!');}if(DB.users[ph].pass!==pw)return alert('Password ভুল!');cur=DB.users[ph];showPlayer();}
+function logout(){cur=null;document.getElementById('loginBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');}
+function showPage(id,btn){['page-play','page-mymatch','page-results','page-profile','page-wallet','page-shop'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id=='page-mymatch')renderMy();if(id=='page-profile')renderProfile();}
+function goWallet(){showPage('page-wallet',null);renderWallet();}
+function showPlayer(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('playerBox').classList.remove('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('noticeText').innerText=DB.notice;document.getElementById('payNum').innerText=DB.pay;renderMatches();renderWallet();}
+function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('totalP').innerText=Object.keys(DB.users).length;document.getElementById('noticeInput').value=DB.notice;document.getElementById('payInput').value=DB.pay;document.getElementById('v1').value=DB.videos[0]||'';document.getElementById('v2').value=DB.videos[1]||'';document.getElementById('v3').value=DB.videos[2]||'';renderAdminMatches();renderReq();renderPlayers();}
+function saveNotice(){DB.notice=document.getElementById('noticeInput').value;save();alert('Save হইছে');}
+function savePay(){DB.pay=document.getElementById('payInput').value;save();alert('Save হইছে');}
+function saveVideos(){DB.videos=[document.getElementById('v1').value,document.getElementById('v2').value,document.getElementById('v3').value].filter(Boolean);save();alert('Save হইছে');}
+function createMatch(){let m={id:Date.now(),type:document.getElementById('mType').value,time:document.getElementById('mTime').value||'আজ রাত 1:30',entry:+document.getElementById('mEntry').value||50,win:+document.getElementById('mWin').value||90,kill:+document.getElementById('mKill').value||12,slot:+document.getElementById('mSlot').value||48,room:'',pass:'',joined:[]};DB.matches.unshift(m);save();showAdmin();alert('Match বানানো হইছে');}
+function filterCat(c,btn){curCat=c;document.querySelectorAll('.cat button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMatches();}
+function matchHTML(m){let pct=Math.round(m.joined.length/m.slot*100);return `<div class="match-card"><div class="match-img">${m.type}<small>${m.time} | CF FF BD</small></div><div class="match-body"><p style="font-size:13px;line-height:1.5">${m.type} - ম্যাচ শুরু করার পর কোনো প্লেয়ারকে না ঢুকালে ১০ সেকেন্ড অপেক্ষা করতে হবে, না হলে রিফান্ড পাবা না! CF FF BD</p><div class="grid"><div><span>WIN PRIZE</span><b>${m.win} TK</b></div><div><span>ENTRY TYPE</span><b>Solo</b></div><div><span>ENTRY FEE</span><b>${m.entry} TK</b></div><div><span>PER KILL</span><b>${m.kill} TK</b></div><div><span>MAP</span><b>Bermuda</b></div><div><span>VERSION</span><b>MOBILE</b></div></div><p style="font-size:12px;color:#666">Only ${m.slot-m.joined.length} spots left &nbsp; ${m.joined.length}/${m.slot}</p><div class="bar"><i style="width:${pct}%"></i></div><div class="join-row"><div style="display:flex;gap:6px"><button style="border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:8px;font-size:11px" onclick="alert('Room: ${m.room||'এখনো দেওয়া হয় নাই'} Pass: ${m.pass||'-'}')">🔑 Room Details</button><button style="border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:8px;font-size:11px">🏆 Total Prize Details</button></div><button class="join-btn" onclick="joinMatch(${m.id})">${m.joined.includes(cur.phone)?'Joined ✅':'Join'}</button></div>${m.room?`<div class="green-bar">🎮 Room: ${m.room} | Pass: ${m.pass}</div>`:''}</div></div>`;}
+function renderMatches(){let list=DB.matches.filter(m=>curCat=='all'||m.type.includes(curCat)||(curCat=='Lone'&&m.type.includes('Lone')));document.getElementById('matchList').innerHTML=list.length?list.map(matchHTML).join(''):'<div class="card">No Matches Found</div>';document.getElementById('loneList').innerHTML=DB.matches.filter(m=>m.type.includes('Lone')).length?DB.matches.filter(m=>m.type.includes('Lone')).map(matchHTML).join(''):'<div class="card">No Matches Found - Lone Wolf এ এখন ম্যাচ নাই</div>';document.getElementById('bonusList').innerHTML=DB.matches.filter(m=>m.type.includes('CS')||m.type.includes('BONUS')).length?DB.matches.filter(m=>m.type.includes('CS')||m.type.includes('BONUS')).map(matchHTML).join(''):'<div class="card">No Matches Found</div>';}
+function joinMatch(id){let m=DB.matches.find(x=>x.id==id);if(m.joined.includes(cur.phone))return alert('তুমি আগেই Join করছো');if(cur.wallet<m.entry)return alert('Wallet এ টাকা নাই। আগে Add করো - Profile > Wallet');cur.wallet-=m.entry;m.joined.push(cur.phone);cur.joins.push(id);DB.history.unshift({phone:cur.phone,text:`Match Join - ৳${m.entry} কাটছে (${m.type})`,time:new Date().toLocaleString()});save();showPlayer();alert('Join হইছে!');}
+function renderMy(){let my=DB.matches.filter(m=>m.joined.includes(cur.phone));document.getElementById('myList').innerHTML=my.length?my.map(matchHTML).join(''):'<div class="card">তুমি এখনো কোনো Match এ Join করো নাই।</div>';let r=DB.matches.filter(m=>m.joined.includes(cur.phone));document.getElementById('resList').innerHTML=r.length?r.map(m=>`<div class="card">${m.type} - ${m.time}<br>Won Amount: 0 TK</div>`).join(''):'<div class="card">কোনো Result নাই।</div>';}
+function renderProfile(){document.getElementById('pName').innerText=cur.phone.slice(-4);document.getElementById('pWallet2').innerText='BDT '+cur.wallet;document.getElementById('pMatches').innerText=cur.joins.length;document.getElementById('pWin').innerText=0;}
+function renderWallet(){document.getElementById('wBal').innerText=cur.wallet;document.getElementById('wBal2').innerText=cur.wallet;document.getElementById('wDep').innerText=cur.dep||0;document.getElementById('wWin').innerText=cur.win||0;let h=DB.history.filter(x=>x.phone==cur.phone);document.getElementById('histList').innerHTML=h.length?h.map(x=>`<div style="padding:10px;border-bottom:1px solid #eee;font-size:13px">${x.text}<br><small style="color:#999">${x.time}</small></div>`).join(''):'কোনো History নাই।';}
+function setAmt(v){document.getElementById('addAmt').value=v;}
+function showAdd(){document.getElementById('addBox').scrollIntoView();}
+function showWithdraw(){document.getElementById('wdBox').scrollIntoView();}
+function addMoney(){let amt=+document.getElementById('addAmt').value,trx=document.getElementById('addTrx').value.trim(),meth=document.getElementById('addMethod').value;if(!amt||amt<80)return alert('সর্বনিম্ন ৮০ টাকা');if(!trx)return alert('TrxID দাও');DB.requests.push({phone:cur.phone,type:'add',amt,trx,meth});DB.history.unshift({phone:cur.phone,text:`Add Request - ৳${amt} (${meth}) Trx:${trx} - Pending`,time:new Date().toLocaleString()});save();renderWallet();alert('Add Request পাঠানো হইছে!');}
+function withdrawMoney(){let amt=+document.getElementById('wdAmt').value,num=document.getElementById('wdNum').value.trim(),meth=document.getElementById('wdMethod').value;if(!amt||!num)return alert('নম্বর + টাকা দাও');if(amt<80)return alert('সর্বনিম্ন ৮০ টাকা তুলতে হবে');if(cur.wallet<amt)return alert('Wallet এ এত টাকা নাই');DB.requests.push({phone:cur.phone,type:'withdraw',amt,trx:num,meth});DB.history.unshift({phone:cur.phone,text:`Withdraw Request - ৳${amt} (${meth} ${num}) - Pending`,time:new Date().toLocaleString()});save();renderWallet();alert('Withdraw Request পাঠানো হইছে!');}
+function renderAdminMatches(){document.getElementById('adminMatches').innerHTML=DB.matches.length?DB.matches.map(m=>`<div class="card"><b>${m.type} - ${m.time}</b> | Joined: ${m.joined.length}/${m.slot}<br><small>${m.joined.join(', ')||'কেউ Join করে নাই'}</small><div style="display:flex;gap:8px;margin-top:10px"><input id="r${m.id}" placeholder="Room ID"><input id="p${m.id}" placeholder="Password"></div><button class="btn btn-green" onclick="setRoom(${m.id})">Room ID দাও</button><button class="btn btn-dark" style="margin-top:8px" onclick="delMatch(${m.id})">Delete</button></div>`).join(''):'কোনো Match নাই।';}
+function setRoom(id){let m=DB.matches.find(x=>x.id==id);m.room=document.getElementById('r'+id).value;m.pass=document.getElementById('p'+id).value;save();showAdmin();alert('Room দেওয়া হইছে');}
+function delMatch(id){DB.matches=DB.matches.filter(x=>x.id!=id);save();showAdmin();}
+function renderReq(){document.getElementById('reqList').innerHTML=DB.requests.length?DB.requests.map((r,i)=>`<div style="background:#f8f8f8;padding:10px;border-radius:10px;margin-bottom:8px">${r.phone} - ${r.type} ৳${r.amt} (${r.meth}) - ${r.trx}<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" onclick="approveReq(${i})">Approve</button><button class="btn btn-dark" onclick="rejectReq(${i})">Reject</button></div></div>`).join(''):'কোনো Pending Request নাই।';}
+function approveReq(i){let r=DB.requests[i];let u=DB.users[r.phone];if(r.type=='add'){u.wallet+=r.amt;u.dep=(u.dep||0)+r.amt;}else u.wallet-=r.amt;DB.history.unshift({phone:r.phone,text:`${r.type=='add'?'Add':'Withdraw'} Approved - ৳${r.amt}`,time:new Date().toLocaleString()});DB.requests.splice(i,1);save();showAdmin();}
+function rejectReq(i){DB.requests.splice(i,1);save();showAdmin();}
+function renderPlayers(){document.getElementById('playerList').innerHTML=Object.values(DB.users).length?Object.values(DB.users).map(u=>`<div style="background:#f8f8f8;padding:10px;border-radius:10px;margin-bottom:8px">${u.phone} - Wallet ৳${u.wallet}<div style="display:flex;gap:8px;margin-top:8px"><input id="k${u.phone}" type="number" placeholder="Win Prize"><button class="btn btn-green" onclick="givePrize('${u.phone}')">দাও</button></div></div>`).join(''):'কোনো Player নাই।';}
+function givePrize(ph){let amt=+document.getElementById('k'+ph).value;DB.users[ph].wallet+=amt;DB.users[ph].win=(DB.users[ph].win||0)+amt;save();showAdmin();alert('Prize দেওয়া হইছে');}
 </script>
-</body></html>
+</body>
+</html>
