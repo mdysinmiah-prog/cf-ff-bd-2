@@ -151,27 +151,23 @@ h2{font-size:17px;text-align:center;margin:16px 0 8px;color:#fff}h2.dark{color:#
 <div class="card"><h3>🔥 Killer টাকা - Join Request</h3><div id="joinReqList"></div></div>
 <div class="card"><h3>👥 সব Player</h3><div id="playerList"></div></div>
 </div></div>
-
-<!-- ===== শুধু এইটুকু যোগ করা হইছে - Firebase ===== -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
-// 👇 এখানে তোমার Firebase Config বসাবা
 var firebaseConfig = {
-  apiKey: "TOMAR_API_KEY",
-  authDomain: "TOMAR_PROJECT.firebaseapp.com",
-  databaseURL: "https://TOMAR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "TOMAR_PROJECT",
-  storageBucket: "TOMAR_PROJECT.appspot.com",
-  messagingSenderId: "123456",
-  appId: "1:123456:web:xxxx"
+  apiKey: "AIzaSyCFFBD-DEMO-KEY",
+  authDomain: "cf-ff-bd-demo.firebaseapp.com",
+  databaseURL: "https://cf-ff-bd-demo-default-rtdb.firebaseio.com",
+  projectId: "cf-ff-bd-demo",
+  storageBucket: "cf-ff-bd-demo.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:cf-ff-bd-demo"
 };
 try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 var cloudDB = null;
 try{ cloudDB = firebase.database(); }catch(e){}
 function cloudSaveMatches(){
   if(!cloudDB) return;
-  // Firebase এ ম্যাচের লিস্ট পাঠানো
   var obj={};
   DB.matches.forEach(function(m){ obj[m.id]=m; });
   cloudDB.ref("cffbd_matches").set(obj);
@@ -193,7 +189,6 @@ function cloudLoadMatches(){
   });
 }
 </script>
-
 <script>
 let DB=JSON.parse(localStorage.getItem('cffbd_final')||'{}');
 if(!DB.users)DB={users:{},matches:[],requests:[],joinRequests:[],history:[],notice:'আজ রাত 1:30 টায় Match আছে।',bkash:'01972380649',nagad:'01972380649',adminPass:'admin123',video:''};
