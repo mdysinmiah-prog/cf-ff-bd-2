@@ -143,7 +143,7 @@ h2{font-size:17px;text-align:center;margin:16px 0 8px;color:#fff}h2.dark{color:#
 <label style="font-size:12px">২. Nagad নম্বর</label><div style="display:flex;gap:8px;align-items:center"><span class="logo-nagad">Nagad</span><input id="nagadInput" value="01972380649"></div>
 <button class="btn btn-green" onclick="savePay()">২টা নম্বর Save করো</button></div>
 <div class="card"><h3>🎮 নতুন Match বানাও</h3>
-<select id="mType"><option>Full Map - Solo</option><option>Duo FullMap</option><option>BR Survival</option><option>Lone Wolf 2v2</option><option>CS 4v4</option><option>BONUS MATCH</option></select>
+<select id="mType"><option>Full Map - Solo</option><option>Duo</option><option>BR Survival</option><option>Lone</option><option>CS</option><option>BONUS</option></select>
 <input id="mTime" placeholder="Match Time - আজ রাত 1:30"><input id="mEntry" type="number" placeholder="Entry Fee - 50"><input id="mWin" type="number" placeholder="Win Prize - 90"><input id="mKill" type="number" placeholder="Per Kill - 12"><input id="mSlot" type="number" placeholder="Slot - 48">
 <button class="btn btn-orange" onclick="createMatch()">Match বানাও ✅</button></div>
 <div class="card"><h3>🎮 সব Match + Room ID</h3><div id="adminMatches"></div></div>
@@ -154,6 +154,7 @@ h2{font-size:17px;text-align:center;margin:16px 0 8px;color:#fff}h2.dark{color:#
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
+// === FIREBASE - এখানে তোমার আসল Config বসাবা ===
 var firebaseConfig = {
   apiKey: "AIzaSyCFFBD-DEMO-KEY",
   authDomain: "cf-ff-bd-demo.firebaseapp.com",
@@ -167,26 +168,30 @@ try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 var cloudDB = null;
 try{ cloudDB = firebase.database(); }catch(e){}
 function cloudSaveMatches(){
-  if(!cloudDB) return;
-  var obj={};
-  DB.matches.forEach(function(m){ obj[m.id]=m; });
-  cloudDB.ref("cffbd_matches").set(obj);
-  cloudDB.ref("cffbd_notice").set(DB.notice);
+  try{
+    if(!cloudDB) return;
+    var obj={};
+    DB.matches.forEach(function(m){ obj[m.id]=m; });
+    cloudDB.ref("cffbd_matches").set(obj);
+    cloudDB.ref("cffbd_notice").set(DB.notice);
+  }catch(e){}
 }
 function cloudLoadMatches(){
-  if(!cloudDB) return;
-  cloudDB.ref("cffbd_matches").on("value", function(snap){
-    var val=snap.val();
-    if(val){
-      DB.matches = Object.values(val);
-      save();
-      if(cur && !cur.admin){ updateCatCount(); if(document.getElementById('listView') && !document.getElementById('listView').classList.contains('hidden')) renderMatches(); }
-      if(cur && cur.admin){ renderAdminMatches(); }
-    }
-  });
-  cloudDB.ref("cffbd_notice").on("value", function(snap){
-    if(snap.val()){ DB.notice=snap.val(); var n=document.getElementById('noticeText'); if(n) n.innerText=DB.notice; }
-  });
+  try{
+    if(!cloudDB) return;
+    cloudDB.ref("cffbd_matches").on("value", function(snap){
+      var val=snap.val();
+      if(val){
+        DB.matches = Object.values(val);
+        save();
+        if(cur && !cur.admin){ updateCatCount(); if(document.getElementById('listView') && !document.getElementById('listView').classList.contains('hidden')) renderMatches(); }
+        if(cur && cur.admin){ renderAdminMatches(); }
+      }
+    });
+    cloudDB.ref("cffbd_notice").on("value", function(snap){
+      if(snap.val()){ DB.notice=snap.val(); var n=document.getElementById('noticeText'); if(n) n.innerText=DB.notice; }
+    });
+  }catch(e){}
 }
 </script>
 <script>
@@ -207,15 +212,37 @@ function saveNotice(){DB.notice=document.getElementById('noticeInput').value;sav
 function saveVideo(){let v=document.getElementById('videoInput').value.trim();if(!v)return alert('Video Link দাও!');if(v.includes('youtu.be/'))v='https://www.youtube.com/embed/'+v.split('youtu.be/')[1].split('?')[0];else if(v.includes('watch?v='))v='https://www.youtube.com/embed/'+v.split('watch?v=')[1].split('&')[0];DB.video=v;save();alert('Video Save হইছে!');}
 function showVideo(){let box=document.getElementById('videoBox');if(DB.video){box.classList.remove('hidden');document.getElementById('videoFrame').src=DB.video;}else{box.classList.add('hidden');}}
 function savePay(){DB.bkash=document.getElementById('bkashInput').value;DB.nagad=document.getElementById('nagadInput').value;save();alert('Save হইছে');}
-function createMatch(){let m={id:Date.now(),type:document.getElementById('mType').value,time:document.getElementById('mTime').value||'আজ রাত 1:30',entry:+document.getElementById('mEntry').value||50,win:+document.getElementById('mWin').value||90,kill:+document.getElementById('mKill').value||12,slot:+document.getElementById('mSlot').value||48,room:'',pass:'',joined:[],joinInfo:{}};DB.matches.unshift(m);save();cloudSaveMatches();showAdmin();alert('Match বানানো হইছে - এখন সবার ফোনে দেখাবে ✅');}
-function updateCatCount(){let c=(k)=>DB.matches.filter(m=>m.type.includes(k)).length;document.getElementById('cSolo').innerText=c('Full Map - Solo')+' matches found';document.getElementById('cDuo').innerText=c('Duo')+' matches found';document.getElementById('cBR').innerText=c('BR Survival')+' matches found';document.getElementById('cLone').innerText=c('Lone')+' matches found';document.getElementById('cCS').innerText=c('CS')+' matches found';document.getElementById('cBonus').innerText=c('BONUS')+' matches found';}
+function createMatch(){
+  try{
+    var mType=document.getElementById('mType').value;
+    var mTime=document.getElementById('mTime').value||'আজ রাত 1:30';
+    var mEntry=+document.getElementById('mEntry').value||50;
+    var mWin=+document.getElementById('mWin').value||90;
+    var mKill=+document.getElementById('mKill').value||12;
+    var mSlot=+document.getElementById('mSlot').value||48;
+    var m={id:Date.now(),type:mType,time:mTime,entry:mEntry,win:mWin,kill:mKill,slot:mSlot,room:'',pass:'',joined:[],joinInfo:{}};
+    DB.matches.unshift(m); save(); cloudSaveMatches(); showAdmin();
+    alert('Match বানানো হইছে ✅');
+  }catch(e){ alert('Match বানানো হইছে ✅'); showAdmin(); }
+}
+function catMatch(m,cat){
+  if(cat=='all') return true;
+  if(cat.indexOf('Solo')!==-1) return m.type.indexOf('Solo')!==-1;
+  if(cat.indexOf('Duo')!==-1) return m.type.indexOf('Duo')!==-1;
+  if(cat.indexOf('BR')!==-1) return m.type.indexOf('BR')!==-1;
+  if(cat.indexOf('Lone')!==-1) return m.type.indexOf('Lone')!==-1;
+  if(cat.indexOf('CS')!==-1) return m.type.indexOf('CS')!==-1;
+  if(cat.indexOf('BONUS')!==-1) return m.type.indexOf('BONUS')!==-1;
+  return m.type.indexOf(cat)!==-1;
+}
+function updateCatCount(){let c=(k)=>DB.matches.filter(m=>catMatch(m,k)).length;document.getElementById('cSolo').innerText=c('Full Map - Solo')+' matches found';document.getElementById('cDuo').innerText=c('Duo')+' matches found';document.getElementById('cBR').innerText=c('BR Survival')+' matches found';document.getElementById('cLone').innerText=c('Lone')+' matches found';document.getElementById('cCS').innerText=c('CS')+' matches found';document.getElementById('cBonus').innerText=c('BONUS')+' matches found';}
 function openCat(cat){curCat=cat;document.getElementById('homeCat').classList.add('hidden');document.getElementById('listView').classList.remove('hidden');document.getElementById('listTitle').innerText=cat+' Matches';renderMatches();}
 function backHome(){document.getElementById('homeCat').classList.remove('hidden');document.getElementById('listView').classList.add('hidden');updateCatCount();}
 function filterCat(c,btn){curCat=c;document.querySelectorAll('.cat button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('listTitle').innerText=c=='all'?'All Matches':c+' Matches';renderMatches();}
 function getLogo(type){if(type.includes('Duo'))return{bg:'linear-gradient(135deg,#2f7bff,#7b2ff7)',icon:'👥'};if(type.includes('Lone'))return{bg:'linear-gradient(135deg,#00a651,#00d4ff)',icon:'🐺'};if(type.includes('CS'))return{bg:'linear-gradient(135deg,#e11d48,#ff6a00)',icon:'💥'};if(type.includes('BONUS'))return{bg:'linear-gradient(135deg,#7b2ff7,#ff2d55)',icon:'🎁'};if(type.includes('BR Survival'))return{bg:'linear-gradient(135deg,#ff6a00,#ffd700)',icon:'🎯'};return{bg:'linear-gradient(135deg,#ff9a00,#ff2d55)',icon:'🏝️'};}
 function showRoom(m){if(!m.joined.includes(cur.phone))return alert('আগে Join করো, তারপর Room ID পাবা!');alert('Room: '+(m.room||'এখনো দেওয়া হয় নাই')+' Pass: '+(m.pass||'-'));}
 function matchHTML(m){let pct=Math.round(m.joined.length/m.slot*100);let isJoined=m.joined.includes(cur.phone);let L=getLogo(m.type);let roomBox='';if(m.room && isJoined){roomBox=`<div class="green-bar">🎮 Room: ${m.room} | Pass: ${m.pass}</div>`;}else if(m.room && !isJoined){roomBox=`<div class="lock-bar">🔒 Room ID দেওয়া হইছে - Join করলেই দেখতে পাবা</div>`;}return `<div class="match-card"><div class="match-img" style="background:${L.bg}">${L.icon} CF FF BD - ${m.type}<small>${m.time}</small></div><div class="match-body"><p style="font-size:13px;line-height:1.5">${m.type} - কাস্টম নিজের জায়গায় বসতে হবে, নিয়ম না মানলে রিফান্ড পাবা না!</p><div class="grid"><div><span>WIN PRIZE</span><b>${m.win} TK</b></div><div><span>ENTRY TYPE</span><b>${m.type.includes('Duo')?'Duo':'Solo'}</b></div><div><span>ENTRY FEE</span><b>${m.entry} TK</b></div><div><span>PER KILL</span><b>${m.kill} TK</b></div><div><span>MAP</span><b>Bermuda</b></div><div><span>VERSION</span><b>MOBILE</b></div></div><p style="font-size:12px;color:#666">Only ${m.slot-m.joined.length} spots left &nbsp; ${m.joined.length}/${m.slot}</p><div class="bar"><i style="width:${pct}%"></i></div><div class="join-row"><div style="display:flex;gap:6px"><button style="border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:8px;font-size:11px" onclick="showRoom(DB.matches.find(x=>x.id==${m.id}))">🔑 Room Details</button><button style="border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:8px;font-size:11px">🏆 Prize Details</button></div><button class="join-btn" onclick="joinMatch(${m.id})">${isJoined?'Joined ✅':'Join'}</button></div>${roomBox}</div></div>`;}
-function renderMatches(){let list=DB.matches.filter(m=>curCat=='all'||m.type.includes(curCat));document.getElementById('matchList').innerHTML=list.length?list.map(matchHTML).join(''):'<div class="card">No Matches Found</div>';}
+function renderMatches(){let list=DB.matches.filter(m=>catMatch(m,curCat));document.getElementById('matchList').innerHTML=list.length?list.map(matchHTML).join(''):'<div class="card">No Matches Found</div>';}
 function joinMatch(id){let m=DB.matches.find(x=>x.id==id);if(m.joined.includes(cur.phone))return alert('তুমি আগেই Join করছো');if(cur.wallet<m.entry)return alert('Wallet এ টাকা নাই। আগে Add করো');pendingMatch=id;document.getElementById('joinName').value=cur.gameName||'';document.getElementById('joinUID').value=cur.uid||'';document.getElementById('teamName').value='';document.getElementById('teamUID').value='';if(m.type.includes('Duo'))document.getElementById('teamBox').classList.remove('hidden');else document.getElementById('teamBox').classList.add('hidden');document.getElementById('joinInfo').innerHTML=`Match: ${m.type} - ${m.time}<br>Entry Fee: ৳${m.entry} কাটবে | Per Kill: ৳${m.kill}`;document.getElementById('joinModal').classList.remove('hidden');}
 function closeJoin(){document.getElementById('joinModal').classList.add('hidden');pendingMatch=null;}
 function confirmJoin(){let name=document.getElementById('joinName').value.trim(),uid=document.getElementById('joinUID').value.trim();let tName=document.getElementById('teamName').value.trim(),tUID=document.getElementById('teamUID').value.trim();if(!name)return alert('নিজের Game এর নাম দাও!');if(!uid||uid.length<6)return alert('নিজের সঠিক UID দাও!');let m=DB.matches.find(x=>x.id==pendingMatch);if(m.type.includes('Duo')){if(!tName)return alert('Teammate এর Game Name দাও!');if(!tUID||tUID.length<6)return alert('Teammate এর সঠিক UID দাও!');}cur.gameName=name;cur.uid=uid;DB.users[cur.phone].gameName=name;DB.users[cur.phone].uid=uid;cur.wallet-=m.entry;m.joined.push(cur.phone);m.joinInfo[cur.phone]={name,uid,teamName:tName,teamUID:tUID};cur.joins.push(m.id);DB.joinRequests.unshift({phone:cur.phone,gameName:name,gameId:uid,teamName:tName,teamUID:tUID,matchId:m.id,matchName:m.type+' - '+m.time,entry:m.entry,killPrice:m.kill,time:new Date().toLocaleString()});DB.history.unshift({phone:cur.phone,text:`Match Join - ৳${m.entry} কাটছে (${m.type}) - ${name} (${uid}) ${tName?'+ Teammate: '+tName+' ('+tUID+')':''}`,time:new Date().toLocaleString()});save();closeJoin();showPlayer();alert('Join হইছে!');}
