@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CF FF BD - Free Fire Tournament</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{background:#0f0f1a;color:#111;padding-bottom:85px}
@@ -18,7 +20,6 @@ input,select{width:100%;background:#f8f8f8;border:1px solid #ddd;padding:13px;bo
 .btn-blue{background:#2f7bff}.btn-green{background:#00a651}.btn-orange{background:#ff6a00}.btn-purple{background:#7b2ff7}.btn-dark{background:#111}.btn-red{background:#e11d48}
 h2{font-size:17px;text-align:center;margin:16px 0 8px;color:#fff}
 h2.dark{color:#111}
-/* GR FF TOUR STYLE CATEGORY */
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .cat-card{border-radius:14px;overflow:hidden;cursor:pointer;position:relative;color:#fff;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .cat-card b{font-size:14px;line-height:1.2;text-shadow:0 2px 4px #000}
@@ -56,7 +57,7 @@ h2.dark{color:#111}
 </head>
 <body>
 <div class="wrap" id="loginBox">
-<div class="top-banner"><div class="logo">🔥</div><b>CF FF BD</b><p>Free Fire Tournament - প্রতিদিন জিতো টাকা</p></div>
+<div class="top-banner"><div class="logo">🔥</div><b>CF FF BD</b><p>Free Fire Tournament - প্রতিদিন জিতো টাকা</p><small id="dbStatus" style="color:#ffe58a">Connecting...</small></div>
 <div class="card"><h3 style="text-align:center">🔐 Login / Register</h3><br>
 <input id="phone" placeholder="মোবাইল নম্বর">
 <input id="pass" type="password" placeholder="Password দাও">
@@ -69,8 +70,6 @@ h2.dark{color:#111}
 <div class="wrap">
 <div class="card" style="display:flex;gap:10px;align-items:center"><div style="background:#ff6a00;color:#fff;padding:14px;border-radius:10px;font-weight:900">Free Fire<br>Topup</div><div><b>LEVEL 30 - 110 TK</b><br><small style="color:#888">(350 DIAMOND)</small></div></div>
 <div class="notice-pop">⚠️ <b>Important Notice</b><br><span id="noticeText">আজ রাত 1:30 টায় Match আছে।</span></div>
-
-<!-- HOME CATEGORY LIKE GR FF TOUR -->
 <div id="homeCat">
 <h2>🎮 Match Category</h2>
 <div class="cat-grid">
@@ -82,8 +81,6 @@ h2.dark{color:#111}
 <div class="cat-card cat-bonus" onclick="openCat('BONUS')"><div class="cat-icon">🎁</div><b>BONUS MATCH</b><small>CF FF BD</small><span class="cat-count" id="cBonus">0 matches found</span></div>
 </div>
 </div>
-
-<!-- MATCH LIST -->
 <div id="listView" class="hidden">
 <button class="back-btn" onclick="backHome()">← Back</button>
 <h2 id="listTitle">Matches</h2>
@@ -91,7 +88,6 @@ h2.dark{color:#111}
 <div id="matchList"></div>
 </div>
 </div></div>
-
 <div id="page-mymatch" class="hidden"><div class="wrap"><h2 class="dark">My Matches</h2><div id="myList"></div></div></div>
 <div id="page-results" class="hidden"><div class="wrap"><h2 class="dark">Results</h2><div id="resList"></div></div></div>
 <div id="page-profile" class="hidden">
@@ -106,7 +102,6 @@ h2.dark{color:#111}
 <div class="list-item">👨‍💻 <b>Developer Profile - 01972380649</b></div>
 </div>
 <button class="btn btn-blue" style="margin-top:14px" onclick="logout()">Logout</button></div></div>
-
 <div id="page-wallet" class="hidden"><div class="wrap">
 <div class="wallet-top"><small>CF FF BD - WALLET &nbsp; Available Balance</small><h1>৳ <span id="wBal">0</span></h1><small>VALID THRU •••• &nbsp; GAMING</small></div>
 <div class="two"><div>💳<br><small>DEPOSITED</small><br><b>৳ <span id="wDep">0</span></b></div><div>🏆<br><small>WINNING</small><br><b>৳ <span id="wWin">0</span></b></div></div>
@@ -184,21 +179,45 @@ h2.dark{color:#111}
 </div></div>
 
 <script>
-let DB=JSON.parse(localStorage.getItem('cffbd_final')||'{}');
-if(!DB.users)DB={users:{},matches:[],requests:[],joinRequests:[],history:[],notice:'আজ রাত 1:30 টায় Match আছে। সবাই Join করো।',bkash:'01972380649',nagad:'01972380649',adminPass:'admin123'};
-if(!DB.joinRequests)DB.joinRequests=[];
-function save(){localStorage.setItem('cffbd_final',JSON.stringify(DB))}
+const firebaseConfig = {
+  apiKey: "AIzaSyAXJ-ZLCbeO8Me7EhzZN65Wfvd9YQmP_2s",
+  authDomain: "cf-ff-bd.firebaseapp.com",
+  databaseURL: "https://cf-ff-bd-default-rtdb.firebaseio.com",
+  projectId: "cf-ff-bd",
+  storageBucket: "cf-ff-bd.firebasestorage.app",
+  messagingSenderId: "841101325126",
+  appId: "1:841101325126:web:f2bc23e349ca203af9eb47",
+  measurementId: "G-SJLLV75J03"
+};
+firebase.initializeApp(firebaseConfig);
+const dbRef = firebase.database().ref('cffbd_final');
+let DB={users:{},matches:[],requests:[],joinRequests:[],history:[],notice:'আজ রাত 1:30 টায় Match আছে। সবাই Join করো।',bkash:'01972380649',nagad:'01972380649',adminPass:'admin123'};
+let DBLoaded=false;
+function save(){ if(DBLoaded) dbRef.set(DB); }
+dbRef.on('value', (snap)=>{
+  let val=snap.val();
+  if(val){ DB=val; if(!DB.users)DB.users={}; if(!DB.matches)DB.matches=[]; if(!DB.requests)DB.requests=[]; if(!DB.joinRequests)DB.joinRequests=[]; if(!DB.history)DB.history=[]; }
+  else { dbRef.set(DB); }
+  DBLoaded=true;
+  let st=document.getElementById('dbStatus'); if(st) st.innerText='Online ✅ - সব ফোনে Connected';
+  if(cur){
+    if(cur.admin) showAdmin();
+    else { if(DB.users[cur.phone]) cur=DB.users[cur.phone]; showPlayer(); }
+  } else {
+    if(document.getElementById('playerBox') && !document.getElementById('playerBox').classList.contains('hidden')){ updateCatCount(); renderMatches(); }
+  }
+});
 let cur=null,curCat='all',pendingMatch=null,selPay='bKash',selWd='bKash';
 window.onload=function(){document.getElementById('joinModal').classList.add('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden');}
-function login(){let ph=document.getElementById('phone').value.trim(),pw=document.getElementById('pass').value.trim();if(ph.length<11||!pw)return alert('নম্বর + Password দাও');if(ph=='01972380649'){if(pw!==DB.adminPass)return alert('Admin Password ভুল!');cur={phone:ph,admin:true};showAdmin();return;}if(!DB.users[ph]){DB.users[ph]={phone:ph,pass:pw,wallet:0,dep:0,win:0,joins:[],gameName:'',uid:''};save();alert('নতুন ID বানানো হইছে!');}if(DB.users[ph].pass!==pw)return alert('Password ভুল!');cur=DB.users[ph];showPlayer();}
+function login(){ if(!DBLoaded) return alert('একটু দাঁড়াও, Online হইতাছে...'); let ph=document.getElementById('phone').value.trim(),pw=document.getElementById('pass').value.trim();if(ph.length<11||!pw)return alert('নম্বর + Password দাও');if(ph=='01972380649'){if(pw!==DB.adminPass)return alert('Admin Password ভুল!');cur={phone:ph,admin:true};showAdmin();return;}if(!DB.users[ph]){DB.users[ph]={phone:ph,pass:pw,wallet:0,dep:0,win:0,joins:[],gameName:'',uid:''};save();alert('নতুন ID বানানো হইছে!');}if(DB.users[ph].pass!==pw)return alert('Password ভুল!');cur=DB.users[ph];showPlayer();}
 function logout(){cur=null;document.getElementById('loginBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('joinModal').classList.add('hidden');}
 function showPage(id,btn){['page-play','page-mymatch','page-results','page-profile','page-wallet','page-shop'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id=='page-mymatch')renderMy();if(id=='page-profile')renderProfile();if(id=='page-play'){backHome();}}
 function goWallet(){showPage('page-wallet',null);renderWallet();}
 function showPlayer(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('playerBox').classList.remove('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('noticeText').innerText=DB.notice;updateCatCount();backHome();renderWallet();}
-function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('totalP').innerText=Object.keys(DB.users).length;document.getElementById('noticeInput').value=DB.notice;document.getElementById('bkashInput').value=DB.bkash;document.getElementById('nagadInput').value=DB.nagad;renderAdminMatches();renderReq();renderJoinReq();renderPlayers();}
+function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('totalP').innerText=Object.keys(DB.users||{}).length;document.getElementById('noticeInput').value=DB.notice;document.getElementById('bkashInput').value=DB.bkash;document.getElementById('nagadInput').value=DB.nagad;renderAdminMatches();renderReq();renderJoinReq();renderPlayers();}
 function saveNotice(){DB.notice=document.getElementById('noticeInput').value;save();alert('Save হইছে');}
 function savePay(){DB.bkash=document.getElementById('bkashInput').value;DB.nagad=document.getElementById('nagadInput').value;save();alert('Save হইছে');}
-function createMatch(){let m={id:Date.now(),type:document.getElementById('mType').value,time:document.getElementById('mTime').value||'আজ রাত 1:30',entry:+document.getElementById('mEntry').value||50,win:+document.getElementById('mWin').value||90,kill:+document.getElementById('mKill').value||12,slot:+document.getElementById('mSlot').value||48,room:'',pass:'',joined:[],joinInfo:{}};DB.matches.unshift(m);save();showAdmin();alert('Match বানানো হইছে');}
+function createMatch(){let m={id:Date.now(),type:document.getElementById('mType').value,time:document.getElementById('mTime').value||'আজ রাত 1:30',entry:+document.getElementById('mEntry').value||50,win:+document.getElementById('mWin').value||90,kill:+document.getElementById('mKill').value||12,slot:+document.getElementById('mSlot').value||48,room:'',pass:'',joined:[],joinInfo:{}};DB.matches.unshift(m);save();alert('Match বানানো হইছে - এখন সবার ফোনে যাইবো ✅');}
 function updateCatCount(){let c=(k)=>DB.matches.filter(m=>m.type.includes(k)).length;document.getElementById('cSolo').innerText=c('Full Map - Solo')+' matches found';document.getElementById('cDuo').innerText=c('Duo')+' matches found';document.getElementById('cBR').innerText=c('BR Survival')+' matches found';document.getElementById('cLone').innerText=c('Lone')+' matches found';document.getElementById('cCS').innerText=c('CS')+' matches found';document.getElementById('cBonus').innerText=c('BONUS')+' matches found';}
 function openCat(cat){curCat=cat;document.getElementById('homeCat').classList.add('hidden');document.getElementById('listView').classList.remove('hidden');document.getElementById('listTitle').innerText=cat+' Matches';renderMatches();}
 function backHome(){document.getElementById('homeCat').classList.remove('hidden');document.getElementById('listView').classList.add('hidden');updateCatCount();}
@@ -209,9 +228,9 @@ function matchHTML(m){let pct=Math.round(m.joined.length/m.slot*100);let isJoine
 function renderMatches(){let list=DB.matches.filter(m=>curCat=='all'||m.type.includes(curCat));document.getElementById('matchList').innerHTML=list.length?list.map(matchHTML).join(''):'<div class="card">No Matches Found</div>';}
 function joinMatch(id){let m=DB.matches.find(x=>x.id==id);if(m.joined.includes(cur.phone))return alert('তুমি আগেই Join করছো');if(cur.wallet<m.entry)return alert('Wallet এ টাকা নাই। আগে Add করো');pendingMatch=id;document.getElementById('joinName').value=cur.gameName||'';document.getElementById('joinUID').value=cur.uid||'';document.getElementById('teamName').value='';document.getElementById('teamUID').value='';if(m.type.includes('Duo')){document.getElementById('teamBox').classList.remove('hidden');}else{document.getElementById('teamBox').classList.add('hidden');}document.getElementById('joinInfo').innerHTML=`Match: ${m.type} - ${m.time}<br>Entry Fee: ৳${m.entry} কাটবে | Per Kill: ৳${m.kill}`;document.getElementById('joinModal').classList.remove('hidden');}
 function closeJoin(){document.getElementById('joinModal').classList.add('hidden');pendingMatch=null;}
-function confirmJoin(){let name=document.getElementById('joinName').value.trim(),uid=document.getElementById('joinUID').value.trim();let tName=document.getElementById('teamName').value.trim(),tUID=document.getElementById('teamUID').value.trim();if(!name)return alert('নিজের Game এর নাম দাও!');if(!uid||uid.length<6)return alert('নিজের সঠিক UID দাও!');let m=DB.matches.find(x=>x.id==pendingMatch);if(m.type.includes('Duo')){if(!tName)return alert('Teammate এর Game Name দাও!');if(!tUID||tUID.length<6)return alert('Teammate এর সঠিক UID দাও!');}cur.gameName=name;cur.uid=uid;DB.users[cur.phone].gameName=name;DB.users[cur.phone].uid=uid;cur.wallet-=m.entry;m.joined.push(cur.phone);m.joinInfo[cur.phone]={name,uid,teamName:tName,teamUID:tUID};cur.joins.push(m.id);DB.joinRequests.unshift({phone:cur.phone,gameName:name,gameId:uid,teamName:tName,teamUID:tUID,matchId:m.id,matchName:m.type+' - '+m.time,entry:m.entry,killPrice:m.kill,time:new Date().toLocaleString()});DB.history.unshift({phone:cur.phone,text:`Match Join - ৳${m.entry} কাটছে (${m.type}) - ${name} (${uid}) ${tName?'+ Teammate: '+tName+' ('+tUID+')':''}`,time:new Date().toLocaleString()});save();closeJoin();showPlayer();alert('Join হইছে!');}
+function confirmJoin(){let name=document.getElementById('joinName').value.trim(),uid=document.getElementById('joinUID').value.trim();let tName=document.getElementById('teamName').value.trim(),tUID=document.getElementById('teamUID').value.trim();if(!name)return alert('নিজের Game এর নাম দাও!');if(!uid||uid.length<6)return alert('নিজের সঠিক UID দাও!');let m=DB.matches.find(x=>x.id==pendingMatch);if(m.type.includes('Duo')){if(!tName)return alert('Teammate এর Game Name দাও!');if(!tUID||tUID.length<6)return alert('Teammate এর সঠিক UID দাও!');}cur.gameName=name;cur.uid=uid;DB.users[cur.phone].gameName=name;DB.users[cur.phone].uid=uid;cur.wallet-=m.entry;DB.users[cur.phone].wallet=cur.wallet;m.joined.push(cur.phone);m.joinInfo[cur.phone]={name,uid,teamName:tName,teamUID:tUID};cur.joins.push(m.id);DB.users[cur.phone].joins=cur.joins;DB.joinRequests.unshift({phone:cur.phone,gameName:name,gameId:uid,teamName:tName,teamUID:tUID,matchId:m.id,matchName:m.type+' - '+m.time,entry:m.entry,killPrice:m.kill,time:new Date().toLocaleString()});DB.history.unshift({phone:cur.phone,text:`Match Join - ৳${m.entry} কাটছে (${m.type}) - ${name} (${uid}) ${tName?'+ Teammate: '+tName+' ('+tUID+')':''}`,time:new Date().toLocaleString()});save();closeJoin();alert('Join হইছে!');}
 function renderMy(){let my=DB.matches.filter(m=>m.joined.includes(cur.phone));document.getElementById('myList').innerHTML=my.length?my.map(matchHTML).join(''):'<div class="card">তুমি এখনো কোনো Match এ Join করো নাই।</div>';document.getElementById('resList').innerHTML=my.length?my.map(m=>`<div class="card">${m.type} - ${m.time}<br>তোমার নাম: ${m.joinInfo[cur.phone]?.name||''} | UID: ${m.joinInfo[cur.phone]?.uid||''} ${m.joinInfo[cur.phone]?.teamName?'<br>Teammate: '+m.joinInfo[cur.phone].teamName+' ('+m.joinInfo[cur.phone].teamUID+')':''}</div>`).join(''):'<div class="card">কোনো Result নাই।</div>';}
-function renderProfile(){document.getElementById('pName').innerText=cur.phone.slice(-4);document.getElementById('pGameName').innerText=cur.gameName||'-';document.getElementById('pUID').innerText=cur.uid||'-';document.getElementById('pWallet2').innerText='BDT '+cur.wallet;document.getElementById('pMatches').innerText=cur.joins.length;document.getElementById('pWin').innerText=0;}
+function renderProfile(){document.getElementById('pName').innerText=cur.phone.slice(-4);document.getElementById('pGameName').innerText=cur.gameName||'-';document.getElementById('pUID').innerText=cur.uid||'-';document.getElementById('pWallet2').innerText='BDT '+cur.wallet;document.getElementById('pMatches').innerText=cur.joins.length;document.getElementById('pWin').innerText=cur.win||0;}
 function renderWallet(){document.getElementById('wBal').innerText=cur.wallet;document.getElementById('wBal2').innerText=cur.wallet;document.getElementById('wDep').innerText=cur.dep||0;document.getElementById('wWin').innerText=cur.win||0;let h=DB.history.filter(x=>x.phone==cur.phone);document.getElementById('histList').innerHTML=h.length?h.map(x=>`<div style="padding:10px;border-bottom:1px solid #eee;font-size:13px">${x.text}<br><small style="color:#999">${x.time}</small></div>`).join(''):'কোনো History নাই।';}
 function setAmt(v){document.getElementById('addAmt').value=v;document.getElementById('showAmt').innerText=v;}
 function showAdd(){document.getElementById('addBox').scrollIntoView();document.getElementById('addBox').classList.remove('hidden');document.getElementById('addBox2').classList.add('hidden');}
@@ -224,17 +243,17 @@ function selectWd(m){selWd=m;document.getElementById('wdBkash').classList.toggle
 function addMoney(){let amt=+document.getElementById('addAmt').value,trx=document.getElementById('addTrx').value.trim();if(!amt||amt<80)return alert('সর্বনিম্ন ৮০ টাকা');if(!trx)return alert('TrxID দাও');DB.requests.push({phone:cur.phone,type:'add',amt,trx,meth:selPay});DB.history.unshift({phone:cur.phone,text:`Add Request - ৳${amt} (${selPay}) Trx:${trx} - Pending`,time:new Date().toLocaleString()});save();renderWallet();document.getElementById('addTrx').value='';backStep1();alert('Add Request পাঠানো হইছে!');}
 function withdrawMoney(){let amt=+document.getElementById('wdAmt').value,num=document.getElementById('wdNum').value.trim();if(!amt||!num)return alert('নম্বর + টাকা দাও');if(amt<80)return alert('সর্বনিম্ন ৮০ টাকা');if(cur.wallet<amt)return alert('Wallet এ এত টাকা নাই');DB.requests.push({phone:cur.phone,type:'withdraw',amt,trx:num,meth:selWd});DB.history.unshift({phone:cur.phone,text:`Withdraw Request - ৳${amt} (${selWd} ${num}) - Pending`,time:new Date().toLocaleString()});save();renderWallet();alert('Withdraw Request পাঠানো হইছে!');}
 function renderAdminMatches(){document.getElementById('adminMatches').innerHTML=DB.matches.length?DB.matches.map(m=>`<div class="card"><b>${m.type} - ${m.time}</b> | Joined: ${m.joined.length}/${m.slot}<br><small>${m.joined.map(ph=>{let inf=m.joinInfo[ph];return ph+' - '+(inf?inf.name+' ('+inf.uid+')'+(inf.teamName?' + Team: '+inf.teamName+' ('+inf.teamUID+')':''):'')}).join('<br>')||'কেউ Join করে নাই'}</small><div style="display:flex;gap:8px;margin-top:10px"><input id="r${m.id}" placeholder="Room ID"><input id="p${m.id}" placeholder="Password"></div><button class="btn btn-green" onclick="setRoom(${m.id})">Room ID দাও</button><button class="btn btn-dark" style="margin-top:8px" onclick="delMatch(${m.id})">Delete</button></div>`).join(''):'কোনো Match নাই।';}
-function setRoom(id){let m=DB.matches.find(x=>x.id==id);m.room=document.getElementById('r'+id).value;m.pass=document.getElementById('p'+id).value;save();showAdmin();alert('Room দেওয়া হইছে');}
-function delMatch(id){DB.matches=DB.matches.filter(x=>x.id!=id);save();showAdmin();}
+function setRoom(id){let m=DB.matches.find(x=>x.id==id);m.room=document.getElementById('r'+id).value;m.pass=document.getElementById('p'+id).value;save();alert('Room দেওয়া হইছে');}
+function delMatch(id){DB.matches=DB.matches.filter(x=>x.id!=id);save();}
 function renderReq(){document.getElementById('reqList').innerHTML=DB.requests.length?DB.requests.map((r,i)=>`<div style="background:#f8f8f8;padding:10px;border-radius:10px;margin-bottom:8px">${r.phone} - ${r.type} ৳${r.amt} (${r.meth}) - ${r.trx}<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" onclick="approveReq(${i})">Approve</button><button class="btn btn-dark" onclick="rejectReq(${i})">Reject</button></div></div>`).join(''):'কোনো Pending Request নাই।';}
-function approveReq(i){let r=DB.requests[i];let u=DB.users[r.phone];if(r.type=='add'){u.wallet+=r.amt;u.dep=(u.dep||0)+r.amt;}else u.wallet-=r.amt;DB.history.unshift({phone:r.phone,text:`${r.type=='add'?'Add':'Withdraw'} Approved - ৳${r.amt}`,time:new Date().toLocaleString()});DB.requests.splice(i,1);save();showAdmin();}
-function rejectReq(i){DB.requests.splice(i,1);save();showAdmin();}
+function approveReq(i){let r=DB.requests[i];let u=DB.users[r.phone];if(r.type=='add'){u.wallet+=r.amt;u.dep=(u.dep||0)+r.amt;}else u.wallet-=r.amt;DB.history.unshift({phone:r.phone,text:`${r.type=='add'?'Add':'Withdraw'} Approved - ৳${r.amt}`,time:new Date().toLocaleString()});DB.requests.splice(i,1);save();}
+function rejectReq(i){DB.requests.splice(i,1);save();}
 function renderJoinReq(){document.getElementById('joinReqList').innerHTML=DB.joinRequests.length?DB.joinRequests.map((r,i)=>`<div style="background:#f8f8f8;padding:10px;border-radius:10px;margin-bottom:8px"><b>${r.gameName||''}</b> - UID: <b>${r.gameId||''}</b>${r.teamName?'<br>Teammate: <b>'+r.teamName+'</b> - UID: <b>'+r.teamUID+'</b>':''}<br>Phone: ${r.phone}<br><small>${r.matchName} | Entry: ৳${r.entry} | Per Kill: ৳${r.killPrice} | ${r.time}</small><div style="display:flex;gap:8px;margin-top:8px"><input id="k${i}" type="number" placeholder="কয়টা Killer?"><input id="jr${i}" type="number" placeholder="Killer টাকা"></div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" onclick="giveJoinPrize(${i})">Killer টাকা দাও ✅</button><button class="btn btn-red" onclick="cancelJoinReq(${i})">Cancel ❌</button></div></div>`).join(''):'কোনো Join Request নাই।';}
-function giveJoinPrize(i){let r=DB.joinRequests[i];let amt=+document.getElementById('jr'+i).value;let kills=document.getElementById('k'+i).value||'';if(!amt)return alert('Killer টাকা লিখো');if(!DB.users[r.phone])return alert('Player পাওয়া যায় নাই');DB.users[r.phone].wallet+=amt;DB.users[r.phone].win=(DB.users[r.phone].win||0)+amt;DB.history.unshift({phone:r.phone,text:`Killer Prize পাইছো - ৳${amt} (${kills} Killer - ${r.matchName})`,time:new Date().toLocaleString()});DB.joinRequests.splice(i,1);save();showAdmin();alert('Killer টাকা দেওয়া হইছে - ৳'+amt);}
-function cancelJoinReq(i){DB.joinRequests.splice(i,1);save();showAdmin();}
+function giveJoinPrize(i){let r=DB.joinRequests[i];let amt=+document.getElementById('jr'+i).value;let kills=document.getElementById('k'+i).value||'';if(!amt)return alert('Killer টাকা লিখো');if(!DB.users[r.phone])return alert('Player পাওয়া যায় নাই');DB.users[r.phone].wallet+=amt;DB.users[r.phone].win=(DB.users[r.phone].win||0)+amt;DB.history.unshift({phone:r.phone,text:`Killer Prize পাইছো - ৳${amt} (${kills} Killer - ${r.matchName})`,time:new Date().toLocaleString()});DB.joinRequests.splice(i,1);save();alert('Killer টাকা দেওয়া হইছে - ৳'+amt);}
+function cancelJoinReq(i){DB.joinRequests.splice(i,1);save();}
 function renderPlayers(){document.getElementById('playerList').innerHTML=Object.values(DB.users).length?Object.values(DB.users).map(u=>`<div style="background:#f8f8f8;padding:10px;border-radius:10px;margin-bottom:8px">${u.phone} - ${u.gameName||''} (${u.uid||''}) - Wallet ৳${u.wallet}<div style="display:flex;gap:8px;margin-top:8px"><input id="k${u.phone}" type="number" placeholder="Win Prize"><button class="btn btn-green" onclick="givePrize('${u.phone}')">দাও</button><button class="btn btn-red" onclick="cutPlayerBox('${u.phone}')">কাটো</button></div></div>`).join(''):'কোনো Player নাই।';}
-function givePrize(ph){let amt=+document.getElementById('k'+ph).value;if(!amt)return alert('Win Prize লিখো');DB.users[ph].wallet+=amt;DB.users[ph].win=(DB.users[ph].win||0)+amt;DB.history.unshift({phone:ph,text:`Win Prize পাইছো - ৳${amt}`,time:new Date().toLocaleString()});save();showAdmin();alert('Prize দেওয়া হইছে');}
-function cutPlayerBox(ph){if(!confirm(ph+' এর বক্সটা কেটে দিবা?'))return;delete DB.users[ph];DB.joinRequests=DB.joinRequests.filter(r=>r.phone!==ph);save();showAdmin();}
+function givePrize(ph){let amt=+document.getElementById('k'+ph).value;if(!amt)return alert('Win Prize লিখো');DB.users[ph].wallet+=amt;DB.users[ph].win=(DB.users[ph].win||0)+amt;DB.history.unshift({phone:ph,text:`Win Prize পাইছো - ৳${amt}`,time:new Date().toLocaleString()});save();alert('Prize দেওয়া হইছে');}
+function cutPlayerBox(ph){if(!confirm(ph+' এর বক্সটা কেটে দিবা?'))return;delete DB.users[ph];DB.joinRequests=DB.joinRequests.filter(r=>r.phone!==ph);save();}
 </script>
 </body>
 </html>
