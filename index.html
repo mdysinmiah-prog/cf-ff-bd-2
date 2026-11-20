@@ -69,7 +69,7 @@ h2.dark{color:#111}
 <div class="top-banner"><div class="logo" style="width:50px;height:50px;font-size:24px">🔥</div><b>CF FF BD</b><p>আমাদের অ্যাপ ডাউনলোড করতে এইখানে ক্লিক করো</p></div>
 <div class="wrap">
 <div class="card" style="display:flex;gap:10px;align-items:center"><div style="background:#ff6a00;color:#fff;padding:14px;border-radius:10px;font-weight:900">Free Fire<br>Topup</div><div><b>LEVEL 30 - 110 TK</b><br><small style="color:#888">(350 DIAMOND)</small></div></div>
-<div class="notice-pop">⚠️ <b>Important Notice</b><br><span id="noticeText">আজ রাত 1:30 টায় Match আছে।</span></div>
+<div class="notice-pop">⚠️ <b>Important Notice</b><br><span id="noticeText">লোড হইতেছে...</span></div>
 <div id="homeCat">
 <h2>🎮 Match Category</h2>
 <div class="cat-grid">
@@ -163,7 +163,7 @@ h2.dark{color:#111}
 
 <div id="adminBox" class="hidden"><div class="wrap">
 <div class="card"><h3>👑 Admin Panel - CF FF BD</h3><p>Player: <span id="totalP">0</span> জন</p><button class="btn btn-dark" style="margin-top:10px" onclick="logout()">Logout</button></div>
-<div class="card"><h3>📢 Notice</h3><input id="noticeInput"><button class="btn btn-blue" onclick="saveNotice()">Save</button></div>
+<div class="card"><h3>📢 Notice</h3><p style="font-size:12px;color:#666">এখানে লিখে Save করলে হবে না। GitHub এ গিয়ে notice.json ফাইলে লিখতে হবে। নিচের বাটনে চাপ দিলে কপি হবে।</p><input id="noticeInput"><button class="btn btn-blue" onclick="copyNotice()">নোটিশ কপি করো</button></div>
 <div class="card"><h3>💳 টাকা পাঠানোর ২টা নম্বর</h3>
 <label style="font-size:12px">১. bKash নম্বর</label><div style="display:flex;gap:8px;align-items:center"><span class="logo-bkash">bKash</span><input id="bkashInput" value="01972380649"></div>
 <label style="font-size:12px">২. Nagad নম্বর</label><div style="display:flex;gap:8px;align-items:center"><span class="logo-nagad">Nagad</span><input id="nagadInput" value="01972380649"></div>
@@ -194,12 +194,28 @@ const dbRef = firebase.database().ref('cffbd_final');
 let DB={users:{},matches:[],requests:[],joinRequests:[],history:[],notice:'আজ রাত 1:30 টায় Match আছে। সবাই Join করো।',bkash:'01972380649',nagad:'01972380649',adminPass:'admin123'};
 let DBLoaded=false;
 function save(){ if(DBLoaded) dbRef.set(DB); }
+// === FIXED NOTICE - GitHub notice.json থেকে আসবে ===
+function loadNotice(){
+  fetch('notice.json?t='+Date.now())
+  .then(r=>r.json())
+  .then(d=>{
+    if(d && d.message){
+      let el=document.getElementById('noticeText');
+      if(el) el.innerText=d.message;
+      let inp=document.getElementById('noticeInput');
+      if(inp) inp.value=d.message;
+    }
+  }).catch(e=>{});
+}
+loadNotice();
+setInterval(loadNotice, 15000);
 dbRef.on('value', (snap)=>{
   let val=snap.val();
   if(val){ DB=val; if(!DB.users)DB.users={}; if(!DB.matches)DB.matches=[]; if(!DB.requests)DB.requests=[]; if(!DB.joinRequests)DB.joinRequests=[]; if(!DB.history)DB.history=[]; }
   else { dbRef.set(DB); }
   DBLoaded=true;
   let st=document.getElementById('dbStatus'); if(st) st.innerText='Online ✅ - সব ফোনে Connected';
+  loadNotice();
   if(cur){
     if(cur.admin) showAdmin();
     else { if(DB.users[cur.phone]) cur=DB.users[cur.phone]; showPlayer(); }
@@ -208,14 +224,15 @@ dbRef.on('value', (snap)=>{
   }
 });
 let cur=null,curCat='all',pendingMatch=null,selPay='bKash',selWd='bKash';
-window.onload=function(){document.getElementById('joinModal').classList.add('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden');}
+window.onload=function(){document.getElementById('joinModal').classList.add('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden');loadNotice();}
 function login(){ if(!DBLoaded) return alert('একটু দাঁড়াও, Online হইতাছে...'); let ph=document.getElementById('phone').value.trim(),pw=document.getElementById('pass').value.trim();if(ph.length<11||!pw)return alert('নম্বর + Password দাও');if(ph=='01972380649'){if(pw!==DB.adminPass)return alert('Admin Password ভুল!');cur={phone:ph,admin:true};showAdmin();return;}if(!DB.users[ph]){DB.users[ph]={phone:ph,pass:pw,wallet:0,dep:0,win:0,joins:[],gameName:'',uid:''};save();alert('নতুন ID বানানো হইছে!');}if(DB.users[ph].pass!==pw)return alert('Password ভুল!');cur=DB.users[ph];showPlayer();}
 function logout(){cur=null;document.getElementById('loginBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('joinModal').classList.add('hidden');}
 function showPage(id,btn){['page-play','page-mymatch','page-results','page-profile','page-wallet','page-shop'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id=='page-mymatch')renderMy();if(id=='page-profile')renderProfile();if(id=='page-play'){backHome();}}
 function goWallet(){showPage('page-wallet',null);renderWallet();}
-function showPlayer(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('playerBox').classList.remove('hidden');document.getElementById('adminBox').classList.add('hidden');document.getElementById('noticeText').innerText=DB.notice;updateCatCount();backHome();renderWallet();}
-function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('totalP').innerText=Object.keys(DB.users||{}).length;document.getElementById('noticeInput').value=DB.notice;document.getElementById('bkashInput').value=DB.bkash;document.getElementById('nagadInput').value=DB.nagad;renderAdminMatches();renderReq();renderJoinReq();renderPlayers();}
-function saveNotice(){DB.notice=document.getElementById('noticeInput').value;save();alert('Save হইছে');}
+function showPlayer(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('playerBox').classList.remove('hidden');document.getElementById('adminBox').classList.add('hidden');loadNotice();updateCatCount();backHome();renderWallet();}
+function showAdmin(){document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminBox').classList.remove('hidden');document.getElementById('playerBox').classList.add('hidden');document.getElementById('totalP').innerText=Object.keys(DB.users||{}).length;loadNotice();document.getElementById('bkashInput').value=DB.bkash;document.getElementById('nagadInput').value=DB.nagad;renderAdminMatches();renderReq();renderJoinReq();renderPlayers();}
+function copyNotice(){let v=document.getElementById('noticeInput').value;let txt='{"message": "'+v+'"}';navigator.clipboard.writeText(txt).then(()=>{alert('কপি হইছে! এখন GitHub এ গিয়ে notice.json এ পেস্ট করো।\n\n'+txt);});}
+function saveNotice(){copyNotice();}
 function savePay(){DB.bkash=document.getElementById('bkashInput').value;DB.nagad=document.getElementById('nagadInput').value;save();alert('Save হইছে');}
 function createMatch(){let m={id:Date.now(),type:document.getElementById('mType').value,time:document.getElementById('mTime').value||'আজ রাত 1:30',entry:+document.getElementById('mEntry').value||50,win:+document.getElementById('mWin').value||90,kill:+document.getElementById('mKill').value||12,slot:+document.getElementById('mSlot').value||48,room:'',pass:'',joined:[],joinInfo:{}};DB.matches.unshift(m);save();alert('Match বানানো হইছে - এখন সবার ফোনে যাইবো ✅');}
 function updateCatCount(){let c=(k)=>DB.matches.filter(m=>m.type.includes(k)).length;document.getElementById('cSolo').innerText=c('Full Map - Solo')+' matches found';document.getElementById('cDuo').innerText=c('Duo')+' matches found';document.getElementById('cBR').innerText=c('BR Survival')+' matches found';document.getElementById('cLone').innerText=c('Lone')+' matches found';document.getElementById('cCS').innerText=c('CS')+' matches found';document.getElementById('cBonus').innerText=c('BONUS')+' matches found';}
